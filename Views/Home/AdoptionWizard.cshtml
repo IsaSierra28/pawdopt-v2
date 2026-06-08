@@ -1,0 +1,790 @@
+@{
+    ViewData["Title"] = "Apply to Adopt";
+    var petId = ViewData["PetId"] is int pid ? pid : 1;
+}
+
+<!-- Breadcrumb -->
+<div class="adopt-breadcrumb-bar">
+    <div class="adopt-pg-container">
+        <a asp-controller="Home" asp-action="Index" class="bc-link">Home</a>
+        <span class="bc-sep">›</span>
+        <a asp-controller="Home" asp-action="Adopt" class="bc-link">Adopt</a>
+        <span class="bc-sep">›</span>
+        <a class="bc-link" id="wzBcPet" href="#">…</a>
+        <span class="bc-sep">›</span>
+        <span class="bc-current">Apply</span>
+    </div>
+</div>
+
+<div class="wz-page-wrap">
+    <div class="adopt-pg-container">
+
+        <!-- Wizard header -->
+        <div class="wz-page-header">
+            <div>
+                <h1 class="wz-page-title" id="wzPageTitle">Adoption Application</h1>
+                <p class="wz-page-sub">Complete all steps to submit your application</p>
+            </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="wz-progress-bar" id="wzProgressBar" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="5">
+            <div class="wz-prog-track">
+                <div class="wz-prog-fill" id="wzProgFill"></div>
+            </div>
+            <div class="wz-prog-steps">
+                <div class="wz-prog-step active" data-step="1">
+                    <div class="wz-prog-circle" id="wpc1">1</div>
+                    <div class="wz-prog-label">Personal</div>
+                </div>
+                <div class="wz-prog-step" data-step="2">
+                    <div class="wz-prog-circle" id="wpc2">2</div>
+                    <div class="wz-prog-label">Home</div>
+                </div>
+                <div class="wz-prog-step" data-step="3">
+                    <div class="wz-prog-circle" id="wpc3">3</div>
+                    <div class="wz-prog-label">Photos</div>
+                </div>
+                <div class="wz-prog-step" data-step="4">
+                    <div class="wz-prog-circle" id="wpc4">4</div>
+                    <div class="wz-prog-label">Lifestyle</div>
+                </div>
+                <div class="wz-prog-step" data-step="5">
+                    <div class="wz-prog-circle" id="wpc5">5</div>
+                    <div class="wz-prog-label">Review</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main layout: steps + sidebar -->
+        <div class="wz-main-layout">
+
+            <!-- ── Step panels ─────────────────────────── -->
+            <div class="wz-steps-area">
+
+                <!-- ── Step 1: Personal Information ──────── -->
+                <div class="wz-step-panel" id="wzStep1">
+                    <div class="wz-step-header">
+                        <h2 class="wz-step-title">Tell us about yourself</h2>
+                        <p class="wz-step-desc">Basic information so the pet owner can get to know you.</p>
+                    </div>
+
+                    <div class="wz-form-row-2">
+                        <div class="wz-form-group">
+                            <label class="wz-label" for="wfFirstName">First name <span class="wz-req">*</span></label>
+                            <input class="wz-input" id="wfFirstName" type="text" placeholder="Amina" autocomplete="given-name" />
+                            <span class="wz-err" id="errFirstName"></span>
+                        </div>
+                        <div class="wz-form-group">
+                            <label class="wz-label" for="wfLastName">Last name <span class="wz-req">*</span></label>
+                            <input class="wz-input" id="wfLastName" type="text" placeholder="Ayad" autocomplete="family-name" />
+                            <span class="wz-err" id="errLastName"></span>
+                        </div>
+                    </div>
+
+                    <div class="wz-form-row-2">
+                        <div class="wz-form-group">
+                            <label class="wz-label" for="wfEmail">Email <span class="wz-req">*</span></label>
+                            <input class="wz-input" id="wfEmail" type="email" placeholder="you@example.com" autocomplete="email" />
+                            <span class="wz-err" id="errEmail"></span>
+                        </div>
+                        <div class="wz-form-group">
+                            <label class="wz-label" for="wfPhone">Phone number</label>
+                            <input class="wz-input" id="wfPhone" type="tel" placeholder="+1 (514) 000-0000" autocomplete="tel" />
+                        </div>
+                    </div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label" for="wfCity">City &amp; Province <span class="wz-req">*</span></label>
+                        <input class="wz-input" id="wfCity" type="text" placeholder="Montreal, QC" />
+                        <span class="wz-err" id="errCity"></span>
+                    </div>
+
+                    <div class="wz-section-divider">Your pet experience</div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label">Have you owned a pet before? <span class="wz-req">*</span></label>
+                        <div class="wz-opt-group" id="ogPrevPets">
+                            <button type="button" class="wz-opt-btn" data-val="yes">Yes</button>
+                            <button type="button" class="wz-opt-btn" data-val="no">No — first time</button>
+                        </div>
+                        <span class="wz-err" id="errPrevPets"></span>
+                    </div>
+
+                    <div class="wz-form-group wz-conditional" id="cgPrevPetTypes" style="display:none">
+                        <label class="wz-label" for="wfPrevTypes">What animals have you had?</label>
+                        <input class="wz-input" id="wfPrevTypes" type="text" placeholder="e.g. dogs, cats, rabbits…" />
+                    </div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label">Your experience level <span class="wz-req">*</span></label>
+                        <div class="wz-opt-group" id="ogExpLevel">
+                            <button type="button" class="wz-opt-btn" data-val="first">First time</button>
+                            <button type="button" class="wz-opt-btn" data-val="some">Some experience</button>
+                            <button type="button" class="wz-opt-btn" data-val="experienced">Experienced</button>
+                        </div>
+                        <span class="wz-err" id="errExpLevel"></span>
+                    </div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label" for="wfWhyAdopt">Why do you want to adopt this pet? <span class="wz-req">*</span></label>
+                        <textarea class="wz-textarea" id="wfWhyAdopt" rows="4"
+                                  placeholder="Tell the owner what draws you to this specific pet and why you'd be a great match…"></textarea>
+                        <div class="wz-char-count"><span id="ccWhyAdopt">0</span> / 30 min characters</div>
+                        <span class="wz-err" id="errWhyAdopt"></span>
+                    </div>
+                </div>
+
+                <!-- ── Step 2: Home Environment ────────── -->
+                <div class="wz-step-panel" id="wzStep2" style="display:none">
+                    <div class="wz-step-header">
+                        <h2 class="wz-step-title">Your home environment</h2>
+                        <p class="wz-step-desc">Help the owner understand the space your new pet will live in.</p>
+                    </div>
+
+                    <div class="wz-section-divider">Your home</div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label">Type of home <span class="wz-req">*</span></label>
+                        <div class="wz-opt-group" id="ogHomeType">
+                            <button type="button" class="wz-opt-btn" data-val="house">🏠 House</button>
+                            <button type="button" class="wz-opt-btn" data-val="apartment">🏢 Apartment</button>
+                            <button type="button" class="wz-opt-btn" data-val="condo">🏗 Condo</button>
+                            <button type="button" class="wz-opt-btn" data-val="other">🏘 Other</button>
+                        </div>
+                        <span class="wz-err" id="errHomeType"></span>
+                    </div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label">Outdoor space <span class="wz-req">*</span></label>
+                        <div class="wz-opt-group" id="ogOutdoor">
+                            <button type="button" class="wz-opt-btn" data-val="fenced">✅ Fenced yard</button>
+                            <button type="button" class="wz-opt-btn" data-val="patio">🌿 Patio / balcony</button>
+                            <button type="button" class="wz-opt-btn" data-val="none">❌ No outdoor space</button>
+                        </div>
+                        <span class="wz-err" id="errOutdoor"></span>
+                    </div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label">Do you rent or own? <span class="wz-req">*</span></label>
+                        <div class="wz-opt-group" id="ogOwnership">
+                            <button type="button" class="wz-opt-btn" data-val="own">Own</button>
+                            <button type="button" class="wz-opt-btn" data-val="rent">Rent</button>
+                        </div>
+                        <span class="wz-err" id="errOwnership"></span>
+                    </div>
+
+                    <div class="wz-form-group wz-conditional" id="cgLandlord" style="display:none">
+                        <label class="wz-label">Do you have your landlord's permission for pets?</label>
+                        <div class="wz-opt-group" id="ogLandlord">
+                            <button type="button" class="wz-opt-btn" data-val="yes">Yes, confirmed</button>
+                            <button type="button" class="wz-opt-btn" data-val="pending">Not yet requested</button>
+                            <button type="button" class="wz-opt-btn" data-val="na">N/A — pets allowed</button>
+                        </div>
+                    </div>
+
+                    <div class="wz-section-divider">Your household</div>
+
+                    <div class="wz-form-row-2">
+                        <div class="wz-form-group">
+                            <label class="wz-label" for="wfHousehold">People in household <span class="wz-req">*</span></label>
+                            <select class="wz-select" id="wfHousehold">
+                                <option value="">Select…</option>
+                                <option value="1">Just me</option>
+                                <option value="2">2 people</option>
+                                <option value="3+">3 or more</option>
+                            </select>
+                            <span class="wz-err" id="errHousehold"></span>
+                        </div>
+                        <div class="wz-form-group">
+                            <label class="wz-label">Children at home? <span class="wz-req">*</span></label>
+                            <div class="wz-opt-group" id="ogChildren">
+                                <button type="button" class="wz-opt-btn" data-val="yes">Yes</button>
+                                <button type="button" class="wz-opt-btn" data-val="no">No</button>
+                            </div>
+                            <span class="wz-err" id="errChildren"></span>
+                        </div>
+                    </div>
+
+                    <div class="wz-form-group wz-conditional" id="cgChildAges" style="display:none">
+                        <label class="wz-label">Children's age groups</label>
+                        <div class="wz-opt-group wz-multi" id="ogChildAges">
+                            <button type="button" class="wz-opt-btn" data-val="under5">Under 5</button>
+                            <button type="button" class="wz-opt-btn" data-val="5to10">5 – 10</button>
+                            <button type="button" class="wz-opt-btn" data-val="11to17">11 – 17</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Step 3: Home Photos ─────────────── -->
+                <div class="wz-step-panel" id="wzStep3" style="display:none">
+                    <div class="wz-step-header">
+                        <h2 class="wz-step-title">Show us your home</h2>
+                        <p class="wz-step-desc">Photos are optional but significantly increase your chances of approval.</p>
+                    </div>
+
+                    <div class="wz-photo-grid">
+                        <div class="wz-photo-zone" id="pz1">
+                            <input type="file" class="wz-photo-input" accept="image/*" aria-label="Upload front of home">
+                            <div class="wz-photo-placeholder">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                <span class="wz-photo-label">Front of home</span>
+                                <span class="wz-photo-hint">Click to upload</span>
+                            </div>
+                            <img class="wz-photo-preview" alt="Preview" />
+                            <button type="button" class="wz-photo-remove" aria-label="Remove photo">✕</button>
+                        </div>
+                        <div class="wz-photo-zone" id="pz2">
+                            <input type="file" class="wz-photo-input" accept="image/*" aria-label="Upload main living area">
+                            <div class="wz-photo-placeholder">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                <span class="wz-photo-label">Main living area</span>
+                                <span class="wz-photo-hint">Click to upload</span>
+                            </div>
+                            <img class="wz-photo-preview" alt="Preview" />
+                            <button type="button" class="wz-photo-remove" aria-label="Remove photo">✕</button>
+                        </div>
+                        <div class="wz-photo-zone" id="pz3">
+                            <input type="file" class="wz-photo-input" accept="image/*" aria-label="Upload outdoor space">
+                            <div class="wz-photo-placeholder">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                <span class="wz-photo-label">Outdoor space</span>
+                                <span class="wz-photo-hint">Click to upload</span>
+                            </div>
+                            <img class="wz-photo-preview" alt="Preview" />
+                            <button type="button" class="wz-photo-remove" aria-label="Remove photo">✕</button>
+                        </div>
+                        <div class="wz-photo-zone" id="pz4">
+                            <input type="file" class="wz-photo-input" accept="image/*" aria-label="Upload pet sleeping area">
+                            <div class="wz-photo-placeholder">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                <span class="wz-photo-label">Pet sleeping area</span>
+                                <span class="wz-photo-hint">Click to upload</span>
+                            </div>
+                            <img class="wz-photo-preview" alt="Preview" />
+                            <button type="button" class="wz-photo-remove" aria-label="Remove photo">✕</button>
+                        </div>
+                    </div>
+
+                    <div class="wz-photo-tip">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span>Accepted formats: JPG, PNG, HEIC · Max 5 MB per photo · All photos are private and only shared with the pet owner</span>
+                    </div>
+                </div>
+
+                <!-- ── Step 4: Lifestyle ───────────────── -->
+                <div class="wz-step-panel" id="wzStep4" style="display:none">
+                    <div class="wz-step-header">
+                        <h2 class="wz-step-title">Your lifestyle &amp; other animals</h2>
+                        <p class="wz-step-desc">Help the owner understand your daily routine and whether your household is ready.</p>
+                    </div>
+
+                    <div class="wz-section-divider">Other animals</div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label">Do you currently have other pets? <span class="wz-req">*</span></label>
+                        <div class="wz-opt-group" id="ogOtherPets">
+                            <button type="button" class="wz-opt-btn" data-val="yes">Yes</button>
+                            <button type="button" class="wz-opt-btn" data-val="no">No</button>
+                        </div>
+                        <span class="wz-err" id="errOtherPets"></span>
+                    </div>
+
+                    <div class="wz-form-group wz-conditional" id="cgOtherPetsDetails" style="display:none">
+                        <label class="wz-label" for="wfOtherPetDetails">Tell us about your current pets</label>
+                        <textarea class="wz-textarea" id="wfOtherPetDetails" rows="3"
+                                  placeholder="e.g. 1 neutered male cat, 3 years old — very calm and social with other animals"></textarea>
+                    </div>
+
+                    <div class="wz-section-divider">Your lifestyle</div>
+
+                    <div class="wz-form-row-2">
+                        <div class="wz-form-group">
+                            <label class="wz-label" for="wfHoursAlone">Hours the pet would be home alone <span class="wz-req">*</span></label>
+                            <select class="wz-select" id="wfHoursAlone">
+                                <option value="">Select average per day…</option>
+                                <option value="lt2">Less than 2 hours</option>
+                                <option value="2to4">2 – 4 hours</option>
+                                <option value="4to6">4 – 6 hours</option>
+                                <option value="6to8">6 – 8 hours</option>
+                                <option value="gt8">More than 8 hours</option>
+                            </select>
+                            <span class="wz-err" id="errHoursAlone"></span>
+                        </div>
+                        <div class="wz-form-group">
+                            <label class="wz-label">Your activity level <span class="wz-req">*</span></label>
+                            <div class="wz-opt-group wz-opt-wrap" id="ogActivity">
+                                <button type="button" class="wz-opt-btn" data-val="sedentary">🛋 Sedentary</button>
+                                <button type="button" class="wz-opt-btn" data-val="light">🚶 Light</button>
+                                <button type="button" class="wz-opt-btn" data-val="moderate">🚴 Moderate</button>
+                                <button type="button" class="wz-opt-btn" data-val="active">🏃 Active</button>
+                            </div>
+                            <span class="wz-err" id="errActivity"></span>
+                        </div>
+                    </div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label">Experience with this animal type <span class="wz-req">*</span></label>
+                        <div class="wz-opt-group" id="ogBreedExp">
+                            <button type="button" class="wz-opt-btn" data-val="yes">Yes, experienced</button>
+                            <button type="button" class="wz-opt-btn" data-val="no">No, first time</button>
+                            <button type="button" class="wz-opt-btn" data-val="research">Researching</button>
+                        </div>
+                        <span class="wz-err" id="errBreedExp"></span>
+                    </div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label">Is everyone in your household on board? <span class="wz-req">*</span></label>
+                        <div class="wz-opt-group" id="ogAllOnBoard">
+                            <button type="button" class="wz-opt-btn" data-val="yes">Yes, fully agreed</button>
+                            <button type="button" class="wz-opt-btn" data-val="mostly">Mostly</button>
+                            <button type="button" class="wz-opt-btn" data-val="not-yet">Not yet discussed</button>
+                        </div>
+                        <span class="wz-err" id="errAllOnBoard"></span>
+                    </div>
+
+                    <div class="wz-form-group">
+                        <label class="wz-label" for="wfNotes">Anything else you'd like the owner to know? <span class="wz-optional">(optional)</span></label>
+                        <textarea class="wz-textarea" id="wfNotes" rows="3"
+                                  placeholder="Any additional context about your home, schedule, or experience…"></textarea>
+                    </div>
+                </div>
+
+                <!-- ── Step 5: Review & Submit ─────────── -->
+                <div class="wz-step-panel" id="wzStep5" style="display:none">
+                    <div class="wz-step-header">
+                        <h2 class="wz-step-title">Review &amp; submit</h2>
+                        <p class="wz-step-desc">Double-check your application before sending it to the owner.</p>
+                    </div>
+
+                    <!-- Dynamic review content injected by JS -->
+                    <div id="wzReviewContent"></div>
+
+                    <div class="wz-agree-section">
+                        <label class="wz-agree-label">
+                            <input type="checkbox" id="chkAccurate" class="wz-agree-chk" />
+                            <span>I confirm that all information I've provided is accurate and truthful</span>
+                        </label>
+                        <label class="wz-agree-label">
+                            <input type="checkbox" id="chkTerms" class="wz-agree-chk" />
+                            <span>I agree to Pawdopt's <button type="button" class="wz-terms-link" data-bs-toggle="modal" data-bs-target="#termsModal">Terms &amp; Conditions</button></span>
+                        </label>
+                        <span class="wz-err" id="errAgreements"></span>
+                    </div>
+                </div>
+
+                <!-- ── Confirmation ───────────────────── -->
+                <div class="wz-step-panel wz-confirmation" id="wzConfirmation" style="display:none">
+                    <div class="wz-conf-icon-wrap">
+                        <div class="wz-conf-icon">✓</div>
+                    </div>
+                    <h2 class="wz-conf-title">Application Submitted!</h2>
+                    <p class="wz-conf-sub">Your application has been sent to the owner. They'll review it and reach out if there's a good match.</p>
+                    <div class="wz-conf-ref" id="wzConfRef"></div>
+
+                    <div class="wz-conf-steps">
+                        <div class="wz-conf-step-title">What happens next</div>
+                        <div class="wz-conf-step-list">
+                            <div class="wz-conf-next-item">
+                                <div class="wz-conf-next-num">1</div>
+                                <div class="wz-conf-next-text">The owner reviews your application <strong>(usually within 3–5 days)</strong></div>
+                            </div>
+                            <div class="wz-conf-next-item">
+                                <div class="wz-conf-next-num">2</div>
+                                <div class="wz-conf-next-text">If interested, they'll send you a message through Pawdopt to arrange a meet &amp; greet</div>
+                            </div>
+                            <div class="wz-conf-next-item">
+                                <div class="wz-conf-next-num">3</div>
+                                <div class="wz-conf-next-text">Once both parties agree, the adoption is confirmed and you get the handover details</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wz-conf-actions">
+                        <a asp-controller="Home" asp-action="AdopterProfile" class="btn btn-pawdopt-cta">View My Applications</a>
+                        <a asp-controller="Home" asp-action="Adopt" class="wz-conf-browse-btn">Browse More Pets</a>
+                    </div>
+                </div>
+
+                <!-- ── Navigation ─────────────────────── -->
+                <div class="wz-nav-row" id="wzNavRow">
+                    <a asp-controller="Home" asp-action="PetDetail" id="wzCancelLink" class="wz-btn-back wz-btn-cancel">
+                        ✕ Cancel
+                    </a>
+                    <div class="wz-nav-right">
+                        <button type="button" class="wz-btn-back" id="wzBtnBack" style="display:none">
+                            ← Back
+                        </button>
+                        <button type="button" class="wz-btn-next" id="wzBtnNext">
+                            Next <span id="wzNextLabel">step</span> →
+                        </button>
+                        <button type="button" class="wz-btn-submit" id="wzBtnSubmit" style="display:none">
+                            🐾 Submit Application
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── Pet summary sidebar ─────────────────── -->
+            <aside class="wz-pet-sidebar">
+                <div class="wz-pet-card" id="wzPetCard">
+                    <div class="wz-pet-img" id="wzPetImg">
+                        <span id="wzPetEmoji" class="wz-pet-emoji">🐾</span>
+                    </div>
+                    <div class="wz-pet-info">
+                        <div class="wz-pet-name" id="wzPetName">Loading…</div>
+                        <div class="wz-pet-breed" id="wzPetBreed"></div>
+                        <div class="wz-pet-loc" id="wzPetLoc"></div>
+                    </div>
+                </div>
+
+                <div class="wz-sidebar-note">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span>Your information is secure and only shared with this pet's owner</span>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    var PET_ID = @petId;
+    var PETS   = window.PAWDOPT_PETS || [];
+    var pet    = null;
+    for (var i = 0; i < PETS.length; i++) { if (PETS[i].id === PET_ID) { pet = PETS[i]; break; } }
+
+    function isEmail(s) { var at = s.indexOf('\x40'); return at > 0 && s.indexOf('.', at) > at + 1; }
+
+    // ── Render pet sidebar ────────────────────────────────
+    if (pet) {
+        document.title = 'Apply for ' + pet.name + ' — Pawdopt';
+        document.getElementById('wzPageTitle').textContent  = 'Applying for ' + pet.name;
+        document.getElementById('wzBcPet').textContent      = pet.name;
+        document.getElementById('wzBcPet').href             = '/Home/PetDetail?id=' + pet.id;
+        document.getElementById('wzCancelLink').href        = '/Home/PetDetail?id=' + pet.id;
+        document.getElementById('wzPetEmoji').textContent   = pet.emoji;
+        document.getElementById('wzPetImg').style.background = pet.colors;
+        document.getElementById('wzPetName').textContent   = pet.name;
+        document.getElementById('wzPetBreed').textContent  = pet.breed + ' · ' + pet.ageNum + ' ' + pet.ageUnit;
+        document.getElementById('wzPetLoc').textContent    = '📍 ' + pet.city + ', ' + pet.province;
+    }
+
+    // ── State ─────────────────────────────────────────────
+    var currentStep = 1;
+    var TOTAL_STEPS = 5;
+    var fd = {
+        firstName:'', lastName:'', email:'', phone:'', city:'',
+        prevPets:null, prevPetTypes:'', expLevel:'', whyAdopt:'',
+        homeType:'', outdoor:'', ownership:'', landlord:'', household:'',
+        children:null, childAges:[],
+        photos:[null,null,null,null],
+        otherPets:null, otherPetDetails:'',
+        hoursAlone:'', activity:'', breedExp:'', allOnBoard:'', notes:''
+    };
+
+    // ── Progress bar ──────────────────────────────────────
+    function updateProgress() {
+        var pct = ((currentStep - 1) / (TOTAL_STEPS - 1)) * 100;
+        document.getElementById('wzProgFill').style.width = pct + '%';
+        document.querySelectorAll('.wz-prog-step').forEach(function (el) {
+            var s = parseInt(el.dataset.step, 10);
+            var circ = el.querySelector('.wz-prog-circle');
+            el.classList.remove('active','completed');
+            if (s < currentStep)  { el.classList.add('completed'); circ.innerHTML = '✓'; }
+            if (s === currentStep) { el.classList.add('active');    circ.textContent = s; }
+            if (s > currentStep)   { circ.textContent = s; }
+        });
+        document.getElementById('wzProgressBar').setAttribute('aria-valuenow', currentStep);
+    }
+
+    // ── Show/hide step panels ─────────────────────────────
+    function showStep(step) {
+        for (var i = 1; i <= TOTAL_STEPS; i++) {
+            var panel = document.getElementById('wzStep' + i);
+            if (panel) panel.style.display = (i === step) ? '' : 'none';
+        }
+        document.getElementById('wzConfirmation').style.display = 'none';
+        document.getElementById('wzNavRow').style.display       = '';
+        document.getElementById('wzBtnBack').style.display      = step > 1 ? '' : 'none';
+        document.getElementById('wzBtnNext').style.display      = step < TOTAL_STEPS ? '' : 'none';
+        document.getElementById('wzBtnSubmit').style.display    = step === TOTAL_STEPS ? '' : 'none';
+        document.getElementById('wzCancelLink').style.display   = '';
+        if (step < TOTAL_STEPS) {
+            document.getElementById('wzNextLabel').textContent = 'step ' + (step + 1);
+        }
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Collect all field values ──────────────────────────
+    function collectFormData() {
+        fd.firstName   = v('wfFirstName');
+        fd.lastName    = v('wfLastName');
+        fd.email       = v('wfEmail');
+        fd.phone       = v('wfPhone');
+        fd.city        = v('wfCity');
+        fd.prevPetTypes = v('wfPrevTypes');
+        fd.whyAdopt    = v('wfWhyAdopt');
+        fd.household   = document.getElementById('wfHousehold').value;
+        fd.otherPetDetails = v('wfOtherPetDetails');
+        fd.hoursAlone  = document.getElementById('wfHoursAlone').value;
+        fd.notes       = v('wfNotes');
+    }
+
+    function v(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+    function activeVal(groupId) {
+        var btn = document.querySelector('#' + groupId + ' .wz-opt-btn.active');
+        return btn ? btn.dataset.val : '';
+    }
+
+    // ── Validation ────────────────────────────────────────
+    function clearErrors() {
+        document.querySelectorAll('.wz-err').forEach(function (e) { e.textContent = ''; });
+        document.querySelectorAll('.wz-input,.wz-textarea,.wz-select').forEach(function (e) {
+            e.classList.remove('wz-invalid');
+        });
+    }
+
+    function setErr(errId, msg, fieldId) {
+        var e = document.getElementById(errId);
+        if (e) e.textContent = msg;
+        if (fieldId) {
+            var f = document.getElementById(fieldId);
+            if (f) f.classList.add('wz-invalid');
+        }
+    }
+
+    function validateStep(step) {
+        clearErrors();
+        collectFormData();
+        var ok = true;
+
+        if (step === 1) {
+            if (!fd.firstName) { setErr('errFirstName', 'First name is required', 'wfFirstName'); ok = false; }
+            if (!fd.lastName)  { setErr('errLastName',  'Last name is required',  'wfLastName');  ok = false; }
+            if (!fd.email || !isEmail(fd.email)) { setErr('errEmail', 'Valid email is required', 'wfEmail'); ok = false; }
+            if (!fd.city)      { setErr('errCity', 'City is required', 'wfCity'); ok = false; }
+            if (!activeVal('ogPrevPets'))  { setErr('errPrevPets',  'Please select an option'); ok = false; }
+            if (!activeVal('ogExpLevel'))  { setErr('errExpLevel',  'Please select your experience level'); ok = false; }
+            if (fd.whyAdopt.length < 30)   { setErr('errWhyAdopt',  'Please write at least 30 characters', 'wfWhyAdopt'); ok = false; }
+        }
+
+        if (step === 2) {
+            if (!activeVal('ogHomeType'))  { setErr('errHomeType',  'Please select your home type'); ok = false; }
+            if (!activeVal('ogOutdoor'))   { setErr('errOutdoor',   'Please select your outdoor space'); ok = false; }
+            if (!activeVal('ogOwnership')) { setErr('errOwnership', 'Please select rent or own'); ok = false; }
+            if (!fd.household)             { setErr('errHousehold', 'Please select household size', 'wfHousehold'); ok = false; }
+            if (!activeVal('ogChildren'))  { setErr('errChildren',  'Please answer this question'); ok = false; }
+        }
+
+        if (step === 4) {
+            if (!activeVal('ogOtherPets')) { setErr('errOtherPets',  'Please answer this question'); ok = false; }
+            if (!fd.hoursAlone)            { setErr('errHoursAlone', 'Please select hours alone', 'wfHoursAlone'); ok = false; }
+            if (!activeVal('ogActivity'))  { setErr('errActivity',   'Please select your activity level'); ok = false; }
+            if (!activeVal('ogBreedExp'))  { setErr('errBreedExp',   'Please select your experience'); ok = false; }
+            if (!activeVal('ogAllOnBoard')){ setErr('errAllOnBoard', 'Please answer this question'); ok = false; }
+        }
+
+        if (step === 5) {
+            var acc   = document.getElementById('chkAccurate').checked;
+            var terms = document.getElementById('chkTerms').checked;
+            if (!acc || !terms) { setErr('errAgreements', 'Please confirm both boxes before submitting'); ok = false; }
+        }
+
+        if (!ok) {
+            var panel = document.getElementById('wzStep' + step);
+            if (panel) panel.classList.add('wz-shake');
+            setTimeout(function () {
+                if (panel) panel.classList.remove('wz-shake');
+            }, 500);
+        }
+
+        return ok;
+    }
+
+    // ── Review page content ───────────────────────────────
+    function renderReview() {
+        collectFormData();
+        var rows = [
+            { label:'Name',            val: fd.firstName + ' ' + fd.lastName },
+            { label:'Email',           val: fd.email },
+            { label:'Location',        val: fd.city },
+            { label:'Pet experience',  val: activeVal('ogPrevPets') === 'yes' ? 'Has owned pets before' : 'First time' },
+            { label:'Experience level',val: capFirst(activeVal('ogExpLevel')) },
+            { label:'Why this pet',    val: fd.whyAdopt },
+            { label:'Home type',       val: capFirst(activeVal('ogHomeType')) },
+            { label:'Outdoor space',   val: labelOutdoor(activeVal('ogOutdoor')) },
+            { label:'Ownership',       val: capFirst(activeVal('ogOwnership')) },
+            { label:'Household size',  val: fd.household },
+            { label:'Children',        val: activeVal('ogChildren') === 'yes' ? 'Yes' : 'No' },
+            { label:'Other pets',      val: activeVal('ogOtherPets') === 'yes' ? 'Yes — ' + (fd.otherPetDetails || 'see notes') : 'No' },
+            { label:'Hours alone',     val: labelHours(fd.hoursAlone) },
+            { label:'Activity level',  val: capFirst(activeVal('ogActivity')) },
+            { label:'Breed experience',val: labelBreedExp(activeVal('ogBreedExp')) },
+            { label:'All on board',    val: labelOnBoard(activeVal('ogAllOnBoard')) }
+        ];
+
+        var html = '<div class="wz-review-card">';
+        html += '<div class="wz-review-pet">';
+        if (pet) {
+            html += '<span class="wz-review-pet-emoji">' + pet.emoji + '</span>';
+            html += '<div><strong>' + pet.name + '</strong><br><span style="font-size:0.8rem;color:var(--text-secondary)">' + pet.breed + ' · ' + pet.city + ', ' + pet.province + '</span></div>';
+        }
+        html += '</div></div>';
+
+        html += '<div class="wz-review-grid">';
+        rows.forEach(function (r) {
+            if (!r.val) return;
+            html += '<div class="wz-review-row"><div class="wz-review-key">' + r.label + '</div><div class="wz-review-val">' + escHtml(r.val) + '</div></div>';
+        });
+        html += '</div>';
+
+        if (fd.notes) {
+            html += '<div class="wz-review-notes"><div class="wz-review-key">Additional notes</div><div class="wz-review-val">' + escHtml(fd.notes) + '</div></div>';
+        }
+
+        document.getElementById('wzReviewContent').innerHTML = html;
+    }
+
+    function capFirst(s)        { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+    function escHtml(s)         { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function labelOutdoor(v)    { return { fenced:'Fenced yard', patio:'Patio / balcony', none:'No outdoor space' }[v] || ''; }
+    function labelHours(v)      { return { lt2:'Less than 2 hrs', '2to4':'2–4 hrs', '4to6':'4–6 hrs', '6to8':'6–8 hrs', gt8:'More than 8 hrs' }[v] || ''; }
+    function labelBreedExp(v)   { return { yes:'Yes, experienced', no:'No, first time', research:'Currently researching' }[v] || ''; }
+    function labelOnBoard(v)    { return { yes:'Yes, fully agreed', mostly:'Mostly', 'not-yet':'Not yet discussed' }[v] || ''; }
+
+    // ── Submit ────────────────────────────────────────────
+    function submitApplication() {
+        var appId = 'APP-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+        var apps  = JSON.parse(localStorage.getItem('pawdopt-apps') || '[]');
+        apps.push({ id: appId, petId: PET_ID, petName: pet ? pet.name : '?', date: new Date().toISOString(), status: 'pending' });
+        localStorage.setItem('pawdopt-apps', JSON.stringify(apps));
+
+        document.getElementById('wzConfRef').textContent = 'Reference: ' + appId;
+
+        for (var i = 1; i <= TOTAL_STEPS; i++) {
+            var p = document.getElementById('wzStep' + i);
+            if (p) p.style.display = 'none';
+        }
+        document.getElementById('wzProgressBar').style.display = 'none';
+        document.getElementById('wzNavRow').style.display      = 'none';
+        document.getElementById('wzConfirmation').style.display = '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Navigation ────────────────────────────────────────
+    document.getElementById('wzBtnNext').addEventListener('click', function () {
+        if (!validateStep(currentStep)) return;
+        currentStep++;
+        if (currentStep === TOTAL_STEPS) renderReview();
+        showStep(currentStep);
+    });
+
+    document.getElementById('wzBtnBack').addEventListener('click', function () {
+        if (currentStep > 1) { currentStep--; showStep(currentStep); }
+    });
+
+    document.getElementById('wzBtnSubmit').addEventListener('click', function () {
+        if (!validateStep(TOTAL_STEPS)) return;
+        submitApplication();
+    });
+
+    // ── Option buttons (radio) ────────────────────────────
+    document.querySelectorAll('.wz-opt-group:not(.wz-multi) .wz-opt-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var group = this.closest('.wz-opt-group');
+            group.querySelectorAll('.wz-opt-btn').forEach(function (b) { b.classList.remove('active'); });
+            this.classList.add('active');
+        });
+    });
+
+    // ── Option buttons (multi-select) ─────────────────────
+    document.querySelectorAll('.wz-multi .wz-opt-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () { this.classList.toggle('active'); });
+    });
+
+    // ── Conditionals ──────────────────────────────────────
+    function bindConditional(groupId, showVal, targetId) {
+        document.querySelectorAll('#' + groupId + ' .wz-opt-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var show = this.dataset.val === showVal;
+                document.getElementById(targetId).style.display = show ? '' : 'none';
+            });
+        });
+    }
+
+    bindConditional('ogPrevPets',  'yes',  'cgPrevPetTypes');
+    bindConditional('ogOwnership', 'rent', 'cgLandlord');
+    bindConditional('ogChildren',  'yes',  'cgChildAges');
+    bindConditional('ogOtherPets', 'yes',  'cgOtherPetsDetails');
+
+    // ── Char counter ──────────────────────────────────────
+    document.getElementById('wfWhyAdopt').addEventListener('input', function () {
+        document.getElementById('ccWhyAdopt').textContent = this.value.length;
+    });
+
+    // ── Photo upload zones ────────────────────────────────
+    document.querySelectorAll('.wz-photo-zone').forEach(function (zone) {
+        var input   = zone.querySelector('.wz-photo-input');
+        var preview = zone.querySelector('.wz-photo-preview');
+        var remBtn  = zone.querySelector('.wz-photo-remove');
+
+        zone.addEventListener('click', function (e) {
+            if (e.target !== remBtn && !remBtn.contains(e.target) && e.target !== input) {
+                input.click();
+            }
+        });
+
+        input.addEventListener('change', function (e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+                preview.src = ev.target.result;
+                preview.style.display = '';
+                zone.classList.add('has-photo');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        remBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            preview.src = '';
+            preview.style.display = 'none';
+            zone.classList.remove('has-photo');
+            input.value = '';
+        });
+    });
+
+    // ── Drag and drop for photos ──────────────────────────
+    document.querySelectorAll('.wz-photo-zone').forEach(function (zone) {
+        zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', function ()  { zone.classList.remove('drag-over'); });
+        zone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+            var file = e.dataTransfer.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+            var input = zone.querySelector('.wz-photo-input');
+            var preview = zone.querySelector('.wz-photo-preview');
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+                preview.src = ev.target.result;
+                preview.style.display = '';
+                zone.classList.add('has-photo');
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // ── Init ──────────────────────────────────────────────
+    showStep(1);
+
+})();
+</script>
+}

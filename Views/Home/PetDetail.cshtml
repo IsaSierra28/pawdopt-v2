@@ -1,0 +1,299 @@
+@{
+    ViewData["Title"] = "Pet Detail";
+    var petId = ViewData["PetId"] is int pid ? pid : 1;
+}
+
+<!-- Breadcrumb -->
+<div class="adopt-breadcrumb-bar" id="pdBreadcrumb">
+    <div class="adopt-pg-container">
+        <a asp-controller="Home" asp-action="Index" class="bc-link">Home</a>
+        <span class="bc-sep">›</span>
+        <a asp-controller="Home" asp-action="Adopt" class="bc-link" data-i18n="nav-adopt">Adopt</a>
+        <span class="bc-sep">›</span>
+        <span class="bc-current" id="pdBreadcrumbName">…</span>
+    </div>
+</div>
+
+<!-- Main content (rendered by JS) -->
+<div class="pd-page-wrap">
+    <div class="adopt-pg-container">
+
+        <!-- Back link -->
+        <a asp-controller="Home" asp-action="Adopt" class="pd-back-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            <span data-i18n="pd-back">Back to listings</span>
+        </a>
+
+        <!-- Not found state -->
+        <div id="pdNotFound" style="display:none" class="pd-not-found">
+            <div class="empty-paw">🐾</div>
+            <h2>Pet not found</h2>
+            <p>This listing may have been removed or adopted already.</p>
+            <a asp-controller="Home" asp-action="Adopt" class="btn btn-pawdopt-cta">Browse all pets</a>
+        </div>
+
+        <!-- Two-column layout -->
+        <div class="pd-two-col" id="pdContent" style="display:none">
+
+            <!-- ── Left: detail panels ──────────────────── -->
+            <div class="pd-left">
+
+                <!-- Image card -->
+                <div class="pd-image-card">
+                    <div class="pd-image-inner" id="pdImageInner">
+                        <span id="pdBadge"></span>
+                        <button class="pet-fav-btn pd-fav-btn" id="pdFavBtn" aria-label="Save to favourites">
+                            <svg id="pdFavIcon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 stroke="#9ca3af" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        </button>
+                        <span class="pd-emoji-xl" id="pdEmoji"></span>
+                    </div>
+                </div>
+
+                <!-- Quick stats -->
+                <div class="pd-section">
+                    <div class="pd-section-title" data-i18n="pd-quick-stats">Quick facts</div>
+                    <div class="pd-quick-stats" id="pdQuickStats"></div>
+                </div>
+
+                <!-- About -->
+                <div class="pd-section">
+                    <div class="pd-section-title" id="pdAboutTitle">About</div>
+                    <p class="pd-story" id="pdStory"></p>
+                </div>
+
+                <!-- Traits -->
+                <div class="pd-section">
+                    <div class="pd-section-title" data-i18n="pd-traits">Personality &amp; traits</div>
+                    <div class="pd-traits" id="pdTraits"></div>
+                </div>
+
+                <!-- Health status -->
+                <div class="pd-section">
+                    <div class="pd-section-title" data-i18n="pd-health">Health status</div>
+                    <div class="pd-health-list" id="pdHealth"></div>
+                </div>
+
+                <!-- Location -->
+                <div class="pd-section">
+                    <div class="pd-section-title" data-i18n="pd-location">Location</div>
+                    <div class="pd-location-row" id="pdLocation"></div>
+                </div>
+
+            </div>
+
+            <!-- ── Right: action card (sticky) ──────────── -->
+            <div class="pd-right">
+                <div class="pd-action-card">
+
+                    <h2 class="pd-action-pet-name" id="pdActionName"></h2>
+                    <p class="pd-action-breed" id="pdActionBreed"></p>
+
+                    <!-- Listed by -->
+                    <div class="pd-listed-by" id="pdListedBy"></div>
+
+                    <!-- CTA buttons -->
+                    <button class="pd-btn-apply" id="pdApplyBtn">
+                        🐾 <span data-i18n="pd-apply">Apply to Adopt</span>
+                    </button>
+                    <button class="pd-btn-outline pd-btn-save" id="pdSaveBtn">
+                        <svg id="pdSaveIcon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        <span id="pdSaveBtnTxt" data-i18n="pd-save">Save to Favourites</span>
+                    </button>
+                    <button class="pd-btn-outline" id="pdMsgBtn">
+                        💬 <span data-i18n="pd-message">Message Owner</span>
+                    </button>
+
+                    <!-- Guest gate (shown when apply clicked without auth) -->
+                    <div class="pd-login-note" id="pdLoginNote" style="display:none">
+                        🔒 <span data-i18n="pd-login-note">You need an account to apply.</span>
+                        <br>
+                        <a asp-controller="Home" asp-action="AdopterProfile" data-i18n="pd-login-link">Login or Register →</a>
+                    </div>
+
+                    <!-- Mini how-it-works -->
+                    <div class="pd-mini-how">
+                        <div class="pd-mini-how-title" data-i18n="pd-how-title">How adoption works</div>
+                        <div class="pd-mini-step">
+                            <div class="pd-mini-num">1</div>
+                            <div class="pd-mini-step-text" data-i18n="pd-how-1">Create your profile and submit a short application</div>
+                        </div>
+                        <div class="pd-mini-step">
+                            <div class="pd-mini-num">2</div>
+                            <div class="pd-mini-step-text" data-i18n="pd-how-2">The owner reviews your profile and may arrange a meet</div>
+                        </div>
+                        <div class="pd-mini-step">
+                            <div class="pd-mini-num">3</div>
+                            <div class="pd-mini-step-text" data-i18n="pd-how-3">Once accepted, you connect directly and arrange the handover</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Similar pets -->
+        <div class="pd-similar-section" id="pdSimilarSection" style="display:none">
+            <h3 class="pd-similar-title" data-i18n="pd-similar">Similar pets you may like</h3>
+            <div class="pd-similar-grid" id="pdSimilarGrid"></div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    var PET_ID  = @petId;
+    var PETS    = window.PAWDOPT_PETS || [];
+    var pet     = null;
+    for (var i = 0; i < PETS.length; i++) { if (PETS[i].id === PET_ID) { pet = PETS[i]; break; } }
+
+    var favs = new Set(JSON.parse(localStorage.getItem('pawdopt-favs') || '[]'));
+
+    function saveFavs() { localStorage.setItem('pawdopt-favs', JSON.stringify(Array.from(favs))); }
+    function capFirst(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+    function ageLabel(p) { return p.ageNum + ' ' + p.ageUnit; }
+
+    if (!pet) {
+        document.getElementById('pdNotFound').style.display = '';
+        return;
+    }
+
+    // ── Page title + breadcrumb ───────────────────────────
+    document.title = pet.name + ' — Adopt — Pawdopt';
+    document.getElementById('pdBreadcrumbName').textContent = pet.name;
+    document.getElementById('pdAboutTitle').textContent     = 'About ' + pet.name;
+    document.getElementById('pdContent').style.display      = '';
+
+    // ── Image card ────────────────────────────────────────
+    document.getElementById('pdImageInner').style.background = pet.colors;
+    document.getElementById('pdEmoji').textContent = pet.emoji;
+
+    var badge = document.getElementById('pdBadge');
+    if (pet.badge === 'new')    { badge.className = 'pet-badge-new';    badge.textContent = 'New'; }
+    if (pet.badge === 'urgent') { badge.className = 'pet-badge-urgent'; badge.textContent = 'Urgent'; }
+
+    // ── Favourite toggle ──────────────────────────────────
+    function updateFavUI() {
+        var isFav = favs.has(pet.id);
+        var icon  = document.getElementById('pdFavIcon');
+        var saveIcon = document.getElementById('pdSaveIcon');
+        var saveTxt  = document.getElementById('pdSaveBtnTxt');
+        icon.setAttribute('fill',   isFav ? '#ef4444' : 'none');
+        icon.setAttribute('stroke', isFav ? '#ef4444' : '#9ca3af');
+        saveIcon.setAttribute('fill',   isFav ? '#ef4444' : 'none');
+        saveIcon.setAttribute('stroke', isFav ? '#ef4444' : 'currentColor');
+        saveTxt.textContent = isFav ? 'Saved ♥' : 'Save to Favourites';
+        document.getElementById('pdSaveBtn').classList.toggle('is-fav', isFav);
+        document.getElementById('pdFavBtn').classList.toggle('is-fav', isFav);
+    }
+
+    updateFavUI();
+
+    document.getElementById('pdFavBtn').addEventListener('click', function () {
+        if (favs.has(pet.id)) favs.delete(pet.id); else favs.add(pet.id);
+        saveFavs(); updateFavUI();
+    });
+    document.getElementById('pdSaveBtn').addEventListener('click', function () {
+        if (favs.has(pet.id)) favs.delete(pet.id); else favs.add(pet.id);
+        saveFavs(); updateFavUI();
+    });
+
+    // ── Apply button → wizard ─────────────────────────────
+    document.getElementById('pdApplyBtn').addEventListener('click', function () {
+        window.location.href = '/Home/AdoptionWizard?petId=' + pet.id;
+    });
+    document.getElementById('pdMsgBtn').addEventListener('click', function () {
+        var note = document.getElementById('pdLoginNote');
+        note.style.display = note.style.display === 'none' ? '' : 'none';
+    });
+
+    // ── Action card ───────────────────────────────────────
+    document.getElementById('pdActionName').textContent  = pet.name;
+    document.getElementById('pdActionBreed').textContent = pet.breed + ' · ' + ageLabel(pet) + ' · ' + capFirst(pet.gender);
+
+    document.getElementById('pdListedBy').innerHTML =
+        '<div class="pd-lister-avatar">' + pet.rehomer.avatar + '</div>' +
+        '<div>' +
+            '<div class="pd-lister-name">' + pet.rehomer.name + '</div>' +
+            '<div class="pd-lister-meta">📍 ' + pet.rehomer.city + ' · Member since ' + pet.rehomer.since + '</div>' +
+        '</div>';
+
+    // ── Quick stats ───────────────────────────────────────
+    var genderIcon = pet.gender === 'male' ? '♂' : '♀';
+    document.getElementById('pdQuickStats').innerHTML = [
+        { icon:'🎂', label: ageLabel(pet) },
+        { icon: genderIcon, label: capFirst(pet.gender) },
+        { icon:'📏', label: capFirst(pet.size) },
+        { icon:'🐾', label: pet.species === 'dog' ? 'Dog' : 'Cat' },
+        { icon:'📍', label: pet.city + ', ' + pet.province }
+    ].map(function (s) {
+        return '<div class="pd-stat-pill"><span class="pd-stat-icon">' + s.icon + '</span><span>' + s.label + '</span></div>';
+    }).join('');
+
+    // ── Story ─────────────────────────────────────────────
+    document.getElementById('pdStory').textContent = pet.story;
+
+    // ── Traits ────────────────────────────────────────────
+    document.getElementById('pdTraits').innerHTML = (pet.traits || []).map(function (t) {
+        return '<span class="pd-trait">' + t + '</span>';
+    }).join('');
+
+    // ── Health ────────────────────────────────────────────
+    var healthItems = [
+        { label:'Vaccinated',     val: pet.vaccinated },
+        { label:'Neutered / Spayed', val: pet.neutered },
+        { label:'Microchipped',   val: pet.microchipped }
+    ];
+    document.getElementById('pdHealth').innerHTML = healthItems.map(function (h) {
+        var cls  = h.val ? 'yes' : 'no';
+        var icon = h.val ? '✓' : '✕';
+        return '<div class="pd-health-item">' +
+            '<span class="pd-health-check ' + cls + '">' + icon + '</span>' +
+            '<span class="pd-health-label">' + h.label + '</span>' +
+            (h.val ? '' : '<span class="pd-health-note"> — not yet confirmed</span>') +
+        '</div>';
+    }).join('');
+
+    // ── Location ──────────────────────────────────────────
+    document.getElementById('pdLocation').innerHTML =
+        '<div class="pd-location-row">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="#ef4444"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>' +
+            '<span>' + pet.city + ', ' + pet.province + ', Canada</span>' +
+        '</div>';
+
+    // ── Similar pets ──────────────────────────────────────
+    var similar = PETS.filter(function (p) { return p.species === pet.species && p.id !== pet.id; }).slice(0, 3);
+    if (similar.length > 0) {
+        document.getElementById('pdSimilarSection').style.display = '';
+        document.getElementById('pdSimilarGrid').innerHTML = similar.map(function (p) {
+            var isFav = favs.has(p.id);
+            var genderTag = p.gender === 'male'
+                ? '<span class="pet-tag pet-tag-male">Male</span>'
+                : '<span class="pet-tag pet-tag-female">Female</span>';
+            return '<div class="pet-card" role="listitem">' +
+                '<div class="pet-card-img" style="background:' + p.colors + ';">' +
+                    (p.badge === 'new' ? '<span class="pet-badge-new">New</span>' : p.badge === 'urgent' ? '<span class="pet-badge-urgent">Urgent</span>' : '') +
+                    '<span class="pet-emoji">' + p.emoji + '</span>' +
+                '</div>' +
+                '<div class="pet-card-body">' +
+                    '<h5 class="pet-name">' + p.name + '</h5>' +
+                    '<div class="pet-tags">' + genderTag + '<span class="pet-tag">' + p.breed + '</span><span class="pet-tag">' + ageLabel(p) + '</span></div>' +
+                    '<p class="pet-location"><svg width="11" height="11" viewBox="0 0 24 24" fill="#ef4444"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>' + p.city + ', ' + p.province + '</p>' +
+                    '<a href="/Home/PetDetail?id=' + p.id + '" class="btn btn-more-info">More Info</a>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+})();
+</script>
+}

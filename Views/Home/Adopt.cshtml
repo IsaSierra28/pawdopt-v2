@@ -186,21 +186,8 @@
 <script>
 (function () {
 
-    // ── Pet data ──────────────────────────────────────────
-    var PETS = [
-        { id:1,  name:'Pitter', species:'dog', breed:'Pit Bull',          size:'large',  ageNum:3,  ageUnit:'yr', gender:'male',   province:'QC', city:'Montreal',    emoji:'🐕',     badge:'new',    vaccinated:true,  neutered:true,  microchipped:false, colors:'linear-gradient(135deg,#fde8d8 0%,#e8d5f0 100%)', desc:'Friendly and playful. Great for a home with a yard. Excellent with older children.' },
-        { id:2,  name:'Hero',   species:'cat', breed:'DLH',               size:'small',  ageNum:2,  ageUnit:'yr', gender:'male',   province:'AB', city:'Calgary',     emoji:'🐈',     badge:'',       vaccinated:true,  neutered:false, microchipped:true,  colors:'linear-gradient(135deg,#d8eef5 0%,#e8f0e8 100%)', desc:'Quiet and curious indoor cat. Perfect for apartment living. Very low maintenance.' },
-        { id:3,  name:'Magie',  species:'dog', breed:'Shiba Inu',         size:'medium', ageNum:14, ageUnit:'mo', gender:'female', province:'ON', city:'Toronto',     emoji:'🐕‍🦺', badge:'',       vaccinated:true,  neutered:true,  microchipped:true,  colors:'linear-gradient(135deg,#d8e8f5 0%,#ddf0e8 100%)', desc:'Lives with 2 children and gets along beautifully. Social and energetic pup.' },
-        { id:4,  name:'Felix',  species:'cat', breed:'Domestic SH',       size:'small',  ageNum:5,  ageUnit:'yr', gender:'female', province:'BC', city:'Vancouver',   emoji:'🐱',     badge:'',       vaccinated:false, neutered:true,  microchipped:false, colors:'linear-gradient(135deg,#fff0d8 0%,#f5e8f0 100%)', desc:'Loves to cuddle and follow you around. Very social and affectionate cat.' },
-        { id:5,  name:'Buddy',  species:'dog', breed:'Golden Retriever',  size:'large',  ageNum:4,  ageUnit:'yr', gender:'male',   province:'QC', city:'Quebec City', emoji:'🐶',     badge:'',       vaccinated:true,  neutered:true,  microchipped:true,  colors:'linear-gradient(135deg,#fdf8d8 0%,#f8ead8 100%)', desc:'Gentle giant who loves fetch and long walks. Great with families and other dogs.' },
-        { id:6,  name:'Luna',   species:'cat', breed:'Maine Coon',        size:'medium', ageNum:1,  ageUnit:'yr', gender:'female', province:'QC', city:'Laval',       emoji:'🐈‍⬛', badge:'new',    vaccinated:true,  neutered:false, microchipped:false, colors:'linear-gradient(135deg,#ead8f8 0%,#d8e8f8 100%)', desc:'Elegant and quiet. Loves high places and cozy naps. Fully litter-trained.' },
-        { id:7,  name:'Rex',    species:'dog', breed:'German Shepherd',   size:'large',  ageNum:7,  ageUnit:'yr', gender:'male',   province:'ON', city:'Ottawa',      emoji:'🦮',     badge:'urgent', vaccinated:true,  neutered:true,  microchipped:true,  colors:'linear-gradient(135deg,#e0ecd5 0%,#f0e8d5 100%)', desc:'Loyal and protective senior dog. Needs experienced owner. Currently in foster care.' },
-        { id:8,  name:'Mochi',  species:'dog', breed:'Pomeranian',        size:'small',  ageNum:8,  ageUnit:'mo', gender:'female', province:'BC', city:'Victoria',    emoji:'🐕',     badge:'new',    vaccinated:true,  neutered:false, microchipped:false, colors:'linear-gradient(135deg,#fce8f0 0%,#f8e8fc 100%)', desc:'Tiny ball of fluff and energy! Loves cuddles and squeaky toys. Very playful.' },
-        { id:9,  name:'Shadow', species:'cat', breed:'Russian Blue',      size:'small',  ageNum:3,  ageUnit:'yr', gender:'male',   province:'AB', city:'Edmonton',    emoji:'🐈',     badge:'',       vaccinated:true,  neutered:true,  microchipped:true,  colors:'linear-gradient(135deg,#d8e4fc 0%,#d8f0f4 100%)', desc:'Calm and independent. Adjusts well to new environments. Good with other cats.' },
-        { id:10, name:'Bella',  species:'dog', breed:'Labrador',          size:'large',  ageNum:2,  ageUnit:'yr', gender:'female', province:'QC', city:'Sherbrooke',  emoji:'🐶',     badge:'new',    vaccinated:true,  neutered:true,  microchipped:true,  colors:'linear-gradient(135deg,#eaf8d8 0%,#d8f0f8 100%)', desc:'Cheerful lab mix who loves swimming and playing ball. Great family dog.' },
-        { id:11, name:'Oliver', species:'cat', breed:'British Shorthair', size:'medium', ageNum:6,  ageUnit:'yr', gender:'male',   province:'MB', city:'Winnipeg',    emoji:'🐱',     badge:'urgent', vaccinated:false, neutered:true,  microchipped:false, colors:'linear-gradient(135deg,#e8dde8 0%,#dde8e0 100%)', desc:'Mellow senior cat looking for a quiet home. Loves lap time and window watching.' },
-        { id:12, name:'Nala',   species:'dog', breed:'Husky',             size:'large',  ageNum:3,  ageUnit:'yr', gender:'female', province:'SK', city:'Saskatoon',   emoji:'🐕',     badge:'new',    vaccinated:true,  neutered:false, microchipped:true,  colors:'linear-gradient(135deg,#d8e8fc 0%,#fce8d8 100%)', desc:'Stunning Husky with bright blue eyes. Needs an active family and lots of exercise.' }
-    ];
+    // ── Pet data (shared via pawdopt-data.js) ─────────────
+    var PETS = window.PAWDOPT_PETS || [];
 
     var PAGE_SIZE = 6;
 
@@ -311,7 +298,7 @@
                     p.city + ', ' + p.province +
                 '</p>' +
                 (healthHtml ? '<div class="health-badges">' + healthHtml + '</div>' : '') +
-                '<a href="#" class="btn btn-more-info" style="margin-top:0.75rem">More Info</a>' +
+                '<a href="/Home/PetDetail?id=' + p.id + '" class="btn btn-more-info" style="margin-top:0.75rem">More Info</a>' +
             '</div>' +
         '</div>';
     }

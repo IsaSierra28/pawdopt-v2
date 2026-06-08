@@ -56,7 +56,7 @@
                                 <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                             </svg>
                         </button>
-                        <a href="#" class="btn btn-pawdopt-cta" data-i18n="nav-cta">Login / Register</a>
+                        <a asp-controller="Home" asp-action="AdopterProfile" class="btn btn-pawdopt-cta" data-i18n="nav-cta">Login / Register</a>
                     </div>
                 </div>
 
@@ -210,6 +210,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/pawdopt-data.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

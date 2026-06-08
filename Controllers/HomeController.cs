@@ -16,6 +16,23 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult PetDetail(int id = 1)
+    {
+        ViewData["PetId"] = id;
+        return View();
+    }
+
+    public IActionResult AdopterProfile()
+    {
+        return View();
+    }
+
+    public IActionResult AdoptionWizard(int petId = 1)
+    {
+        ViewData["PetId"] = petId;
+        return View();
+    }
+
     public IActionResult Privacy()
     {
         return View();
