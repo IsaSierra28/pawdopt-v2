@@ -38,7 +38,8 @@
                                asp-controller="Rehome" asp-action="List" data-i18n="nav-rehome">Rehome</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link pawdopt-nav-link" href="#" data-i18n="nav-care">Care Guide</a>
+                            <a class="nav-link pawdopt-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "CareGuide" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="CareGuide" data-i18n="nav-care">Care Guide</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link pawdopt-nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")"
@@ -86,7 +87,7 @@
                     <h6 class="footer-heading" data-i18n="footer-explore">Explore</h6>
                     <ul class="footer-links">
                         <li><a asp-controller="Home" asp-action="Adopt" data-i18n="nav-adopt">Adopt</a></li>
-                        <li><a asp-controller="Rehome" asp-action="List" data-i18n="nav-rehome">Rehome</a></li>
+                        <li><a href="#" data-i18n="nav-rehome">Rehome</a></li>
                         <li><a href="#" data-i18n="nav-care">Care Guide</a></li>
                     </ul>
                 </div>
