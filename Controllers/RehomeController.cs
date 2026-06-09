@@ -14,6 +14,12 @@ public class RehomeController : Controller
         return View();
     }
 
+    public IActionResult Advisor(string id)
+    {
+        ViewData["AdvisorId"] = id ?? "sophie-martin";
+        return View();
+    }
+
     [HttpPost]
     public IActionResult SaveStep1()
     {
